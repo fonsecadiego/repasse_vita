@@ -1,0 +1,8 @@
+{% extends "repasse/base.html" %}
+{% block title %}Cadastros{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Cadastros</h1>
+    <p><a class="btn" href="{% url 'repasse-cadastros-medicos' %}">Médicos</a> <a class="btn" href="{% url 'repasse-cadastros-regras' %}">Regras</a></p>
+</div>
+{% endblock %}

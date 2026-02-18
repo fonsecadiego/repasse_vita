@@ -1,0 +1,8 @@
+{% extends "repasse/base.html" %}
+{% block content %}
+<div class="card"><h1>{{ titulo }}</h1>
+<form method="post">{% csrf_token %}
+<div class="form-grid">{% for field in form %}<div class="field"><label>{{ field.label }}</label>{{ field }}{% if field.errors %}<small style="color:#b91c1c;">{{ field.errors|striptags }}</small>{% endif %}</div>{% endfor %}</div>
+<button class="btn" type="submit" style="margin-top:12px;">Salvar</button>
+</form></div>
+{% endblock %}

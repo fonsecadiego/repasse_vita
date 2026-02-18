@@ -1,8 +1,33 @@
 from django.urls import path
-from apps.repasse.views import DashboardGestorView, DashboardMedicoView, MirthIngestaoView
+
+from apps.repasse.views import (
+    CadastrosHomeView,
+    DashboardGestorView,
+    DashboardMedicoView,
+    DashboardOptionsView,
+    MedicoCreateView,
+    MedicoListView,
+    MedicoUpdateView,
+    MirthIngestaoView,
+    RegraCreateView,
+    RegraListView,
+    RegraUpdateView,
+    RegraVigenciasView,
+    VigenciaUpdateView,
+)
 
 urlpatterns = [
     path("mirth/ingest/", MirthIngestaoView.as_view(), name="repasse-mirth-ingest"),
-    path("me/dashboard/", DashboardMedicoView.as_view(), name="repasse-dashboard-medico"),
-    path("gestor/dashboard/", DashboardGestorView.as_view(), name="repasse-dashboard-gestor"),
+    path("dashboard/medico/", DashboardMedicoView.as_view(), name="repasse-dashboard-medico"),
+    path("dashboard/gestor/", DashboardGestorView.as_view(), name="repasse-dashboard-gestor"),
+    path("dashboard/options", DashboardOptionsView.as_view(), name="repasse-dashboard-options"),
+    path("cadastros/", CadastrosHomeView.as_view(), name="repasse-cadastros-home"),
+    path("cadastros/medicos/", MedicoListView.as_view(), name="repasse-cadastros-medicos"),
+    path("cadastros/medicos/novo/", MedicoCreateView.as_view(), name="repasse-cadastros-medicos-novo"),
+    path("cadastros/medicos/<int:id>/editar/", MedicoUpdateView.as_view(), name="repasse-cadastros-medicos-editar"),
+    path("cadastros/regras/", RegraListView.as_view(), name="repasse-cadastros-regras"),
+    path("cadastros/regras/novo/", RegraCreateView.as_view(), name="repasse-cadastros-regras-novo"),
+    path("cadastros/regras/<int:id>/editar/", RegraUpdateView.as_view(), name="repasse-cadastros-regras-editar"),
+    path("cadastros/regras/<int:id>/vigencias/", RegraVigenciasView.as_view(), name="repasse-cadastros-regras-vigencias"),
+    path("cadastros/vigencias/<int:id>/editar/", VigenciaUpdateView.as_view(), name="repasse-cadastros-vigencias-editar"),
 ]

@@ -1,0 +1,7 @@
+{% extends "repasse/base.html" %}
+{% block content %}
+<div class="card"><h1>Médicos</h1><a class="btn" href="{% url 'repasse-cadastros-medicos-novo' %}">Novo médico</a></div>
+<div class="card"><table><thead><tr><th>Nome</th><th>CRM</th><th>Usuário</th><th>Ativo</th><th></th></tr></thead><tbody>
+{% for medico in medicos %}<tr><td>{{ medico.nome }}</td><td>{{ medico.crm }}</td><td>{{ medico.user|default:'-' }}</td><td>{{ medico.ativo|yesno:'Sim,Não' }}</td><td><a class="btn btn-secondary" href="{% url 'repasse-cadastros-medicos-editar' medico.id %}">Editar</a></td></tr>{% empty %}<tr><td colspan="5">Sem médicos.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

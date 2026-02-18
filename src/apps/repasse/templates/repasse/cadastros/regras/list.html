@@ -1,0 +1,7 @@
+{% extends "repasse/base.html" %}
+{% block content %}
+<div class="card"><h1>Regras</h1><a class="btn" href="{% url 'repasse-cadastros-regras-novo' %}">Nova regra</a></div>
+<div class="card"><table><thead><tr><th>ID</th><th>Prioridade</th><th>Ativa</th><th>Convênio</th><th></th><th></th></tr></thead><tbody>
+{% for regra in regras %}<tr><td>{{ regra.id }}</td><td>{{ regra.prioridade }}</td><td>{{ regra.ativo|yesno:'Sim,Não' }}</td><td>{{ regra.convenio }}</td><td><a class="btn btn-secondary" href="{% url 'repasse-cadastros-regras-editar' regra.id %}">Editar</a></td><td><a class="btn" href="{% url 'repasse-cadastros-regras-vigencias' regra.id %}">Vigências</a></td></tr>{% empty %}<tr><td colspan="6">Sem regras.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}
