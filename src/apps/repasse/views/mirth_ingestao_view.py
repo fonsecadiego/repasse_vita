@@ -3,10 +3,12 @@ import json
 from django.conf import settings
 from django.http import HttpRequest, JsonResponse
 from django.views import View
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from apps.repasse.services.ingestao_service import ingest_from_mirth
 
-
+@method_decorator(csrf_exempt, name="dispatch")
 class MirthIngestaoView(View):
     http_method_names = ["post"]
 
