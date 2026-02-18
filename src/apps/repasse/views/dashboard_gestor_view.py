@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.views import View
@@ -12,8 +14,19 @@ class DashboardGestorView(View):
     def get(self, request: HttpRequest):
         assert_gestor(request.user)
 
-        ano = int(request.GET.get("ano"))
-        mes = int(request.GET.get("mes"))
+        hoje = date.today()
+        ano_raw = request.GET.get("ano")
+        mes_raw = request.GET.get("mes")
+
+        try:
+            ano = int(ano_raw) if ano_raw else hoje.year
+            mes = int(mes_raw) if mes_raw else hoje.month
+        except (TypeError, ValueError):
+            return JsonResponse({"detail": "Parâmetros 'ano' e 'mes' inválidos"}, status=400)
+
+        if not (1 <= mes <= 12):
+            return JsonResponse({"detail": "Parâmetro 'mes' deve estar entre 1 e 12"}, status=400)
+
         filtros = {
             "unidade": request.GET.get("unidade"),
             "ds_tipo_proced": request.GET.get("tipo_proced"),
