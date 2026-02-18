@@ -1,4 +1,5 @@
 from django.http import HttpRequest, JsonResponse
+from django.shortcuts import render
 from django.views import View
 
 from apps.repasse.permissions import assert_gestor
@@ -23,11 +24,23 @@ class DashboardGestorView(View):
         }
 
         resultado = calcular_mes(ano=ano, mes=mes, **filtros)
-        return JsonResponse(
-            {
-                "ano": resultado.ano,
-                "mes": resultado.mes,
-                "totais_por_medico": resultado.totais_por_medico,
-                "breakdown": resultado.breakdown,
-            }
-        )
+
+        if request.GET.get("format") == "json":
+            return JsonResponse(
+                {
+                    "ano": resultado.ano,
+                    "mes": resultado.mes,
+                    "totais_por_medico": resultado.totais_por_medico,
+                    "breakdown": resultado.breakdown,
+                }
+            )
+
+        contexto = {
+            "ano": resultado.ano,
+            "mes": resultado.mes,
+            "filtros": filtros,
+            "totais_por_medico": resultado.totais_por_medico,
+            "breakdown": resultado.breakdown,
+        }
+
+        return render(request, "repasse/dashboard_gestor.html", contexto)
