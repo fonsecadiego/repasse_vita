@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Repasse{% endblock %}</title>
+    <style>
+        body { font-family: Inter, Arial, sans-serif; margin:0; background:#f4f6fb; color:#1f2937; }
+        .navbar { background:#111827; color:#fff; padding:14px 24px; display:flex; justify-content:space-between; align-items:center; }
+        .nav-links { display:flex; gap:12px; align-items:center; }
+        .nav-links a { color:#fff; text-decoration:none; font-size:14px; padding:6px 8px; border-radius:6px; }
+        .nav-links a:hover { background:rgba(255,255,255,.12); }
+        .container { max-width:1200px; margin:24px auto; padding:0 16px; }
+        .card { background:#fff; border-radius:10px; padding:16px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+        table { width:100%; border-collapse:collapse; }
+        th, td { border-bottom:1px solid #e5e7eb; padding:10px; text-align:left; font-size:14px; }
+        th { background:#f9fafb; }
+        .btn { border:0; border-radius:6px; padding:8px 12px; cursor:pointer; background:#2563eb; color:#fff; text-decoration:none; display:inline-block; }
+        .btn-secondary { background:#4b5563; }
+        .form-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+        .field { display:flex; flex-direction:column; gap:4px; }
+        .field input, .field select, .field textarea { border:1px solid #d1d5db; border-radius:6px; padding:8px; }
+        .submenu { color:#9ca3af; font-size:13px; }
+        @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr; } .navbar { flex-direction:column; gap:8px; } }
+    </style>
+</head>
+<body>
+    {% if request.user.is_authenticated %}
+    <header class="navbar">
+        <nav class="nav-links">
+            <a href="{% url repasse_dashboard_url_name %}">Dashboard</a>
+            {% if repasse_is_gestor %}
+                <span class="submenu">Cadastros:</span>
+                <a href="{% url 'repasse-cadastros-medicos' %}">Médicos</a>
+                <a href="{% url 'repasse-cadastros-regras' %}">Regras</a>
+                <a href="{% url 'repasse-cadastros-catalogos-home' %}">Catálogos</a>
+            {% endif %}
+        </nav>
+        <div class="nav-links">
+            <span>{{ request.user.get_username }}</span>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="btn btn-secondary" type="submit">Sair</button>
+            </form>
+        </div>
+    </header>
+    {% endif %}
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

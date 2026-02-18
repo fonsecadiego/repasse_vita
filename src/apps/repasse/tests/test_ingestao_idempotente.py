@@ -2,7 +2,7 @@ from datetime import date
 
 from django.test import TestCase
 
-from apps.repasse.models import ProducaoLaudo
+from apps.repasse.models import ProducaoLaudo, TipoProcedCatalog
 from apps.repasse.services.ingestao_service import ingest_from_mirth
 
 
@@ -19,7 +19,7 @@ class IngestaoIdempotenteTest(TestCase):
                 "CRM_MEDICO_EXEC": "111",
                 "NM_PACIENTE": "Paciente A",
                 "DS_PROCED": "RM - Cranio",
-                "DS_TIPO_PROCED": "RM",
+                "DS_TIPO_PROCED": "Tomografia Computadorizada",
                 "ESCALA": "PLANTAO",
                 "CONVENIO": "Particular Extra",
                 "QUANTIDADE": "1",
@@ -33,3 +33,4 @@ class IngestaoIdempotenteTest(TestCase):
         self.assertEqual(primeiro.inseridos, 1)
         self.assertEqual(segundo.ignorados_por_duplicidade, 1)
         self.assertEqual(ProducaoLaudo.objects.count(), 1)
+        self.assertTrue(TipoProcedCatalog.objects.filter(nome="Tomografia Computadorizada").exists())

@@ -1,0 +1,13 @@
+{% extends "repasse/base.html" %}
+{% block title %}Cadastros{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Cadastros</h1>
+    <p>Área de manutenção de dados de repasse.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a class="btn" href="{% url 'repasse-cadastros-medicos' %}">Médicos</a>
+        <a class="btn" href="{% url 'repasse-cadastros-regras' %}">Regras</a>
+        <a class="btn" href="{% url 'repasse-cadastros-catalogos-home' %}">Catálogos</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,11 +1,20 @@
 import hashlib
 from dataclasses import dataclass
-from datetime import date
 from decimal import Decimal
 
 from django.db import transaction
 
-from apps.repasse.models import Medico, ProducaoLaudo
+from apps.repasse.models import (
+    ConvenioCatalog,
+    EscalaCatalog,
+    LeituraCatalog,
+    Medico,
+    ProcedimentoCatalog,
+    ProducaoLaudo,
+    TipoProcedCatalog,
+    UnidadeCatalog,
+)
+from apps.repasse.services.catalog_service import upsert_catalog_value
 
 
 REQUIRED_FIELDS = {
@@ -32,7 +41,6 @@ class IngestaoResultado:
     inseridos: int
     ignorados_por_duplicidade: int
     atualizados: int
-
 
 
 def _normalize_str(value: str | None) -> str:
@@ -71,8 +79,16 @@ def _hash_idempotencia(row: dict) -> str:
         row["ds_proced"],
         row["unidade"],
     ]
-    raw = "|".join(identity_fields)
-    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+    return hashlib.sha256("|".join(identity_fields).encode("utf-8")).hexdigest()
+
+
+def _upsert_catalogs_for_item(item: dict):
+    upsert_catalog_value(UnidadeCatalog, item["unidade"])
+    upsert_catalog_value(ConvenioCatalog, item["convenio"])
+    upsert_catalog_value(EscalaCatalog, item["escala"])
+    upsert_catalog_value(TipoProcedCatalog, item["ds_tipo_proced"])
+    upsert_catalog_value(ProcedimentoCatalog, item["ds_proced"])
+    upsert_catalog_value(LeituraCatalog, item["leitura"])
 
 
 @transaction.atomic
@@ -81,6 +97,7 @@ def ingest_from_mirth(payload: list[dict]) -> IngestaoResultado:
 
     crms = sorted({item["crm_medico"] for item in normalized if item["crm_medico"]})
     medicos_by_crm = {m.crm: m for m in Medico.objects.filter(crm__in=crms)}
+
     novos_medicos = []
     for item in normalized:
         crm = item["crm_medico"]
@@ -95,6 +112,7 @@ def ingest_from_mirth(payload: list[dict]) -> IngestaoResultado:
 
     hashes = []
     for item in normalized:
+        _upsert_catalogs_for_item(item)
         item["hash_idempotencia"] = _hash_idempotencia(item)
         hashes.append(item["hash_idempotencia"])
 
@@ -102,28 +120,29 @@ def ingest_from_mirth(payload: list[dict]) -> IngestaoResultado:
 
     to_create = []
     to_update = []
+    fields = [
+        "unidade",
+        "leitura",
+        "dt_laudo",
+        "dt_exame",
+        "nr_prescricao",
+        "nome_paciente",
+        "ds_proced",
+        "ds_tipo_proced",
+        "escala",
+        "convenio",
+        "quantidade",
+        "valor_exame",
+    ]
+
     for item in normalized:
         medico = medicos_by_crm[item["crm_medico"]]
         existing = existing_by_hash.get(item["hash_idempotencia"])
         if existing:
             changed = False
-            for field in [
-                "unidade",
-                "leitura",
-                "dt_laudo",
-                "dt_exame",
-                "nr_prescricao",
-                "nome_paciente",
-                "ds_proced",
-                "ds_tipo_proced",
-                "escala",
-                "convenio",
-                "quantidade",
-                "valor_exame",
-            ]:
-                new_value = item[field]
-                if getattr(existing, field) != new_value:
-                    setattr(existing, field, new_value)
+            for field in fields:
+                if getattr(existing, field) != item[field]:
+                    setattr(existing, field, item[field])
                     changed = True
             if existing.medico_id != medico.id:
                 existing.medico = medico
@@ -155,24 +174,7 @@ def ingest_from_mirth(payload: list[dict]) -> IngestaoResultado:
         ProducaoLaudo.objects.bulk_create(to_create, ignore_conflicts=True)
 
     if to_update:
-        ProducaoLaudo.objects.bulk_update(
-            to_update,
-            fields=[
-                "unidade",
-                "leitura",
-                "dt_laudo",
-                "dt_exame",
-                "nr_prescricao",
-                "nome_paciente",
-                "ds_proced",
-                "ds_tipo_proced",
-                "escala",
-                "convenio",
-                "quantidade",
-                "valor_exame",
-                "medico",
-            ],
-        )
+        ProducaoLaudo.objects.bulk_update(to_update, fields=[*fields, "medico"])
 
     return IngestaoResultado(
         recebidos=len(payload),

@@ -1,0 +1,13 @@
+{% extends "repasse/base.html" %}
+{% block content %}
+<div class="card"><h1>Vigências da Regra #{{ regra.id }}</h1></div>
+<div class="card"><h3>Nova vigência</h3>
+<form method="post">{% csrf_token %}
+<div class="form-grid">{% for field in form %}<div class="field"><label>{{ field.label }}</label>{{ field }}{% if field.errors %}<small style="color:#b91c1c;">{{ field.errors|striptags }}</small>{% endif %}</div>{% endfor %}</div>
+{% if form.non_field_errors %}<p style="color:#b91c1c;">{{ form.non_field_errors }}</p>{% endif %}
+<button class="btn" style="margin-top:12px;" type="submit">Adicionar</button>
+</form></div>
+<div class="card"><table><thead><tr><th>Início</th><th>Fim</th><th>Tipo</th><th>Valor Fixo</th><th>Percentual</th><th></th></tr></thead><tbody>
+{% for v in vigencias %}<tr><td>{{ v.vigente_de }}</td><td>{{ v.vigente_ate|default:'-' }}</td><td>{{ v.tipo_calculo }}</td><td>{{ v.valor_fixo|default:'-' }}</td><td>{{ v.percentual|default:'-' }}</td><td><a class="btn btn-secondary" href="{% url 'repasse-cadastros-vigencias-editar' v.id %}">Editar</a></td></tr>{% empty %}<tr><td colspan="6">Sem vigências.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

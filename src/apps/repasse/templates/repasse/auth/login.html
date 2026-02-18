@@ -1,0 +1,22 @@
+{% extends "repasse/base.html" %}
+{% block title %}Entrar | Repasse{% endblock %}
+{% block content %}
+<div class="card" style="max-width:420px;margin:60px auto;">
+    <h1 style="margin-top:0;">Acessar sistema</h1>
+    <p style="color:#6b7280;">Faça login para acessar dashboards e cadastros.</p>
+    <form method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div style="background:#fee2e2;color:#991b1b;padding:8px;border-radius:6px;margin-bottom:12px;">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% for field in form %}
+            <div class="field" style="margin-bottom:10px;">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<small style="color:#b91c1c;">{{ field.errors|striptags }}</small>{% endif %}
+            </div>
+        {% endfor %}
+        <button class="btn" style="width:100%;margin-top:8px;" type="submit">Entrar</button>
+    </form>
+</div>
+{% endblock %}
