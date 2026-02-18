@@ -1,0 +1,17 @@
+{% extends "repasse/base.html" %}
+{% block content %}
+<div class="card">
+    <h1>Editar {{ config.title|lower }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="field"><label>Nome</label>{{ form.nome }}{{ form.nome.errors }}</div>
+            <div class="field"><label>{{ form.ativo }} Ativo</label></div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="btn" type="submit">Salvar</button>
+            <a class="btn btn-secondary" href="{% url 'repasse-cadastros-catalogos-list' config.key %}">Voltar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

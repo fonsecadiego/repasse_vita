@@ -74,29 +74,29 @@ class RegraListView(GestorRequiredMixin, View):
 
 class RegraCreateView(GestorRequiredMixin, View):
     def get(self, request):
-        return render(request, "repasse/cadastros/regras/form.html", {"form": RegraRepasseForm(), "titulo": "Nova regra"})
+        return render(request, "repasse/cadastros/regras/form.html", {"form": RegraRepasseForm(), "titulo": "Nova regra", "is_create": True})
 
     def post(self, request):
         form = RegraRepasseForm(request.POST)
         if not form.is_valid():
-            return render(request, "repasse/cadastros/regras/form.html", {"form": form, "titulo": "Nova regra"}, status=400)
+            return render(request, "repasse/cadastros/regras/form.html", {"form": form, "titulo": "Nova regra", "is_create": True}, status=400)
 
-        regra = criar_regra(form.cleaned_data)
+        regra = criar_regra(form.to_model_payload())
         return redirect(reverse("repasse-cadastros-regras-vigencias", kwargs={"id": regra.id}))
 
 
 class RegraUpdateView(GestorRequiredMixin, View):
     def get(self, request, id: int):
         regra = get_object_or_404(list_regras(), id=id)
-        return render(request, "repasse/cadastros/regras/form.html", {"form": RegraRepasseForm(instance=regra), "titulo": "Editar regra"})
+        return render(request, "repasse/cadastros/regras/form.html", {"form": RegraRepasseForm(instance=regra), "titulo": "Editar regra", "is_create": False})
 
     def post(self, request, id: int):
         regra = get_object_or_404(list_regras(), id=id)
         form = RegraRepasseForm(request.POST, instance=regra)
         if not form.is_valid():
-            return render(request, "repasse/cadastros/regras/form.html", {"form": form, "titulo": "Editar regra"}, status=400)
+            return render(request, "repasse/cadastros/regras/form.html", {"form": form, "titulo": "Editar regra", "is_create": False}, status=400)
 
-        atualizar_regra(regra, form.cleaned_data)
+        atualizar_regra(regra, form.to_model_payload())
         return redirect("repasse-cadastros-regras")
 
 

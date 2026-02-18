@@ -1,0 +1,9 @@
+{% extends "repasse/base.html" %}
+{% block content %}
+<div class="card"><h1>Catálogos</h1><p>Gerencie itens usados em ingestão e cadastro de regras.</p></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
+{% for item in catalogos %}
+<div class="card"><h3>{{ item.title }}</h3><a class="btn" href="{% url 'repasse-cadastros-catalogos-list' item.key %}">Abrir</a></div>
+{% endfor %}
+</div>
+{% endblock %}

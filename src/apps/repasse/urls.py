@@ -2,6 +2,10 @@ from django.urls import path
 
 from apps.repasse.views import (
     CadastrosHomeView,
+    CatalogHomeView,
+    CatalogListCreateView,
+    CatalogToggleView,
+    CatalogUpdateView,
     DashboardGestorView,
     DashboardMedicoView,
     DashboardOptionsView,
@@ -22,6 +26,10 @@ urlpatterns = [
     path("dashboard/gestor/", DashboardGestorView.as_view(), name="repasse-dashboard-gestor"),
     path("dashboard/options", DashboardOptionsView.as_view(), name="repasse-dashboard-options"),
     path("cadastros/", CadastrosHomeView.as_view(), name="repasse-cadastros-home"),
+    path("cadastros/catalogos/", CatalogHomeView.as_view(), name="repasse-cadastros-catalogos-home"),
+    path("cadastros/catalogos/<str:key>/", CatalogListCreateView.as_view(), name="repasse-cadastros-catalogos-list"),
+    path("cadastros/catalogos/<str:key>/<int:id>/editar/", CatalogUpdateView.as_view(), name="repasse-cadastros-catalogos-editar"),
+    path("cadastros/catalogos/<str:key>/<int:id>/toggle/", CatalogToggleView.as_view(), name="repasse-cadastros-catalogos-toggle"),
     path("cadastros/medicos/", MedicoListView.as_view(), name="repasse-cadastros-medicos"),
     path("cadastros/medicos/novo/", MedicoCreateView.as_view(), name="repasse-cadastros-medicos-novo"),
     path("cadastros/medicos/<int:id>/editar/", MedicoUpdateView.as_view(), name="repasse-cadastros-medicos-editar"),

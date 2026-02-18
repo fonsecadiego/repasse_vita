@@ -1,8 +1,38 @@
 {% extends "repasse/base.html" %}
 {% block content %}
-<div class="card"><h1>{{ titulo }}</h1>
-<form method="post">{% csrf_token %}
-<div class="form-grid">{% for field in form %}<div class="field"><label>{{ field.label }}</label>{{ field }}{% if field.errors %}<small style="color:#b91c1c;">{{ field.errors|striptags }}</small>{% endif %}</div>{% endfor %}</div>
-<button class="btn" style="margin-top:12px;" type="submit">Salvar</button>
-</form></div>
+<div class="card">
+    <h1>{{ titulo }}</h1>
+    <p style="color:#6b7280;">Defina regras com seleção por catálogo para evitar divergência de texto.</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <h3>Escopo do atendimento</h3>
+        <div class="form-grid">
+            <div class="field"><label>Unidade</label>{{ form.unidade }}<small>Use * para qualquer unidade.</small>{{ form.unidade.errors }}</div>
+            <div class="field"><label>Convênio</label>{{ form.convenio }}<small>Use * para qualquer convênio.</small>{{ form.convenio.errors }}</div>
+            <div class="field"><label>Tipo de procedimento</label>{{ form.tipo_proced }}{{ form.tipo_proced.errors }}</div>
+            <div class="field"><label>Procedimento</label>{{ form.procedimento }}{{ form.procedimento.errors }}</div>
+            <div class="field"><label>Leitura</label>{{ form.leitura }}{{ form.leitura.errors }}</div>
+            <div class="field"><label>Categoria de escala</label>{{ form.escala_categoria }}{{ form.escala_categoria.errors }}</div>
+        </div>
+
+        <h3>Critérios de médico</h3>
+        <div class="form-grid">
+            <div class="field"><label>Tipo de sócio</label>{{ form.socio_tipo }}{{ form.socio_tipo.errors }}</div>
+            <div class="field"><label>Tempo mínimo na empresa (meses)</label>{{ form.tempo_empresa_min_meses }}{{ form.tempo_empresa_min_meses.errors }}</div>
+            <div class="field"><label>Prioridade</label>{{ form.prioridade }}{{ form.prioridade.errors }}</div>
+            <div class="field"><label>{{ form.ativo }} Regra ativa</label></div>
+        </div>
+
+        {% if form.non_field_errors %}
+            <div style="color:#b91c1c;margin-top:12px;">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div style="margin-top:16px;display:flex;gap:8px;">
+            <button class="btn" type="submit">Salvar regra</button>
+            <a class="btn btn-secondary" href="{% url 'repasse-cadastros-regras' %}">Cancelar</a>
+        </div>
+    </form>
+</div>
 {% endblock %}
